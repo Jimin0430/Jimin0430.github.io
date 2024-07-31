@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome to Jimin Choi's GitHub</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      background-color: #f0f0f0;
+    }
+    #canvas {
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.17.1/matter.min.js"></script>
+  <script>
+    const { Engine, Render, Runner, Bodies, World, Mouse, MouseConstraint, Composites } = Matter;
+
+    const engine = Engine.create();
+    const world = engine.world;
+
+    const canvas = document.getElementById('canvas');
+    const render = Render.create({
+      canvas: canvas,
+      engine: engine,
+      options: {
+        width: window.innerWidth,
+        height: window.innerHeight,
+        wireframes: false,
+        background: '#f0f0f0'
+      }
+    });
+
+    Render.run(render);
+    const runner = Runner.create();
+    Runner.run(runner, engine);
+
+    const text = "안녕하세요 최지민의 깃허브에 오신걸 환영합니다.";
+    const fontSize = 50;
+    const characters = text.split('');
+    const characterWidth = fontSize * 0.6;
+    const startX = (window.innerWidth - characters.length * characterWidth) / 2;
+    const startY = window.innerHeight / 2;
+
+    characters.forEach((char, i) => {
+      const x = startX + i * characterWidth;
+      const y = startY;
+      const body = Bodies.rectangle(x, y, characterWidth, fontSize, {
+        render: {
+          fillStyle: '#333',
+          text: {
+            content: char,
+            size: fontSize
+          }
+        }
+      });
+      World.add(world, body);
+    });
+
+    const mouse = Mouse.create(render.canvas);
+    const mouseConstraint = MouseConstraint.create(engine, {
+      mouse: mouse,
+      constraint: {
+        stiffness: 0.2,
+        render: {
+          visible: false
+        }
+      }
+    });
+    World.add(world, mouseConstraint);
+
+    render.mouse = mouse;
+
+    window.addEventListener('resize', () => {
+      render.canvas.width = window.innerWidth;
+      render.canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>
